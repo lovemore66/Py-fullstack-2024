@@ -1,5 +1,30 @@
 from flask import Flask, request, jsonify, render_template
 from models import db, YourModel
+import mysql.connector
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="Msangosfamily@1",
+  database="sys"
+)
+print(mydb)
+if mydb.is_connected():
+    print("Connected to the database")
+else:
+    print("Failed to connect to the database")
+
+
+# Create a cursor object to interact with the database
+cursor = mydb.cursor()
+
+cursor.execute("SHOW DATABASES")
+results = cursor.fetchall()  # Fetch all rows from the result set
+for row in results:
+    print(row)  # Process each row, e.g., print or perform some action
+cursor.close()  # Close the cursor after fetching and processing results
+mydb.close()
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'  # Change this for other databases
