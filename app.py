@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -78,8 +79,8 @@ def get_all_actors():
 def update_record(id):
     data = request.json
     # Example: UPDATE your_table_name SET field1 = %s, field2 = %s WHERE id = %s
-    query = "UPDATE actor SET first_name = %s, last_name = %s, last_updated WHERE actor_id = %s"
-    values = (data['first_name'], data['last_name'], data['last_updated'], id)
+    query = "UPDATE actor SET first_name = %s, last_name = %s, last_update = %s WHERE actor_id = %s"
+    values = (data['first_name'], data['last_name'], data['last_update'], id)
     cursor.execute(query, values)
     mydb.commit()
     return jsonify({'message': 'Record updated successfully'})
@@ -88,11 +89,22 @@ def update_record(id):
 # Delete
 @app.route('/delete/<int:id>', methods=['DELETE'])
 def delete_record(id):
-    query = "DELETE FROM actor WHERE actor_id = %s"
-    value = (id,)
-    cursor.execute(query, value)
-    mydb.commit()
-    return jsonify({'message': 'Record deleted successfully'})
+    try:
+        # Delete associated records from the 'film_actor' table
+        delete_associated_records_query = "DELETE FROM film_actor WHERE actor_id = %s"
+        value = (id,)
+        cursor.execute(delete_associated_records_query, value)
+        mydb.commit()
+
+        # Now delete the record from the 'actor' table
+        delete_actor_query = "DELETE FROM actor WHERE actor_id = %s"
+        cursor.execute(delete_actor_query, value)
+        mydb.commit()
+
+        return jsonify({'message': 'Record deleted successfully'})
+    except mysql.connector.Error as error:
+        return jsonify({'message': f'Failed to delete record: {error}'}), 500
+
 
 @app.route('/')
 def index():

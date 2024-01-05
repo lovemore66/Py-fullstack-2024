@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flask App</title>
+    <meta charset="UTF-8">
+    <title>CRUD Frontend</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Hello, this is the root path!</h1>
-    <p>This is working</p>
+    <h1>Actor CRUD Operations</h1>
+
+    <div>
+        <h2>Create Actor</h2>
+        <input type="text" id="firstName" placeholder="First Name">
+        <input type="text" id="lastName" placeholder="Last Name">
+        <button onclick="createActor()">Create</button>
+    </div>
+
+    <div>
+        <h2>Actors</h2>
+        <ul id="actorsList"></ul>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
