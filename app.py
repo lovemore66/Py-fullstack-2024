@@ -57,8 +57,13 @@ def read_record(id):
 # Retrieve all actors
 @app.route('/actors', methods=['GET'])
 def get_all_actors():
-    query = "SELECT * FROM actor"
-    cursor.execute(query)
+    page = request.args.get('page', default=1, type=int)
+    page_size = request.args.get('page_size', default=10, type=int)
+
+    offset = (page - 1) * page_size
+
+    query = "SELECT * FROM actor LIMIT %s, %s"
+    cursor.execute(query, (offset, page_size))
     records = cursor.fetchall()
 
     actor_list = []
@@ -72,6 +77,7 @@ def get_all_actors():
         actor_list.append(actor_dict)
 
     return jsonify(actor_list)
+
 
 
 # Update

@@ -8,10 +8,10 @@
 <body>
     <h1>Actor CRUD Operations</h1>
 
-    <div>
-        <h2>Create Actor</h2>
+    <div class="details">
         <input type="text" id="firstName" placeholder="First Name">
         <input type="text" id="lastName" placeholder="Last Name">
+        <input type="datetime-local" id="lastUpdate" placeholder="Last Update">
         <button onclick="createActor()">Create</button>
     </div>
 
@@ -19,7 +19,7 @@
         <h2>Actors</h2>
         <ul id="actorsList"></ul>
     </div>
-
+    <div id="paginationContainer"></div>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

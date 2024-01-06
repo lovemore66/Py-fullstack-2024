@@ -1,7 +1,6 @@
-// Function to fetch all actors and display in the list
-async function fetchActors() {
+async function fetchActors(page = 1, pageSize = 10) {
     try {
-        const response = await fetch('/actors');
+        const response = await fetch(`/actors?page=${page}&page_size=${pageSize}`);
         const actors = await response.json();
 
         const actorsList = document.getElementById('actorsList');
@@ -11,7 +10,6 @@ async function fetchActors() {
             const li = document.createElement('li');
             li.innerHTML = `${actor.first_name} | ${actor.last_name} | ${actor.last_update}`;
             
-            // Create buttons for update and delete
             const updateBtn = document.createElement('button');
             updateBtn.innerHTML = 'Update';
             updateBtn.onclick = () => updateActor(actor.actor_id, actor.first_name, actor.last_name, actor.last_update);
@@ -24,15 +22,38 @@ async function fetchActors() {
 
             actorsList.appendChild(li);
         });
+
+        generatePaginationButtons(page, pageSize);
     } catch (error) {
         console.error('Error fetching actors:', error);
     }
 }
 
+function generatePaginationButtons(page, pageSize) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    paginationContainer.innerHTML = '';
+
+    // Assuming you know the total number of pages available
+    const totalPages = 5;
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.innerText = i;
+        button.onclick = () => fetchActors(i, pageSize);
+        paginationContainer.appendChild(button);
+    }
+}
+
+fetchActors();
+
+
 // Function to create a new actor
 async function createActor() {
     const firstName = document.getElementById('firstName').value;
     const lastName = document.getElementById('lastName').value;
+    const lastUpdate = document.getElementById('lastUpdate').value;
+    const dateObj = new Date(lastUpdate);
+    const formattedDate = dateObj.toISOString().slice(0, 19).replace('T', ' ');
 
     try {
         const response = await fetch('/create', {
@@ -42,12 +63,13 @@ async function createActor() {
             },
             body: JSON.stringify({
                 first_name: firstName,
-                last_name: lastName
+                last_name: lastName,
+                last_update: formattedDate
             })
         });
 
         if (response.ok) {
-            fetchActors(); // Refresh the actors list after creating
+            fetchActors();
         } else {
             console.error('Failed to create actor:', response.statusText);
         }
@@ -61,12 +83,8 @@ async function updateActor(actorId, currentFirstName, currentLastName, currentLa
     const newFirstName = prompt('Enter new first name:', currentFirstName);
     const newLastName = prompt('Enter new last name:', currentLastName);
     const newLastUpdate = prompt('Enter new last update:', currentLastUpdate);
-
-     // Convert the string to a date object
      const dateObj = new Date(newLastUpdate);
-     // Format the date in the format MySQL recognizes ('YYYY-MM-DD HH:MM:SS')
      const formattedDate = dateObj.toISOString().slice(0, 19).replace('T', ' ');
-     console.log(formattedDate);
 
     try {
         const response = await fetch(`/update/${actorId}`, {
@@ -82,7 +100,7 @@ async function updateActor(actorId, currentFirstName, currentLastName, currentLa
         });
 
         if (response.ok) {
-            fetchActors(); // Refresh the actors list after updating
+            fetchActors();
         } else {
             console.error('Failed to update actor:', response.statusText);
         }
@@ -100,7 +118,7 @@ async function deleteActor(actorId) {
         });
 
         if (response.ok) {
-            fetchActors(); // Refresh the actors list after deleting
+            fetchActors();
         } else {
             console.error('Failed to delete actor:', response.statusText);
         }
