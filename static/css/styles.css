@@ -11,6 +11,15 @@ body {
     justify-content: space-between;
 }
 
+.pagination button {
+    width: 50px;
+    background-color: white;
+    color: black;
+    border: 1px solid rgba(73, 107, 107, 0.437);
+    margin-left: 0px;
+
+}
+
 h1 {
     text-align: center;
     margin-top: 20px;
@@ -39,14 +48,20 @@ button {
     border-radius: 3px;
     box-sizing: border-box;
 }
+input {
+    margin-left: 15px;
+}
 
 button {
     color: #fff;
     cursor: pointer;
     background-color: rgba(73, 107, 107, 0.437);
     transition: background-color 0.3s ease;
-    width: 150px;
-    margin-left: auto;
+    width: 120px;
+    margin-left: 15px;
+}
+H2 {
+    color: rgba(73, 107, 107, 0.437);
 }
 
 button:hover {
@@ -66,7 +81,6 @@ li {
     grid-template-columns: 78% 10% 10%;
 }
 
-/* Adjustments for the actors list */
 #actorsList {
     margin-top: 20px;
 }

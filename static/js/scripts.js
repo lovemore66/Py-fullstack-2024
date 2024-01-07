@@ -1,7 +1,9 @@
 async function fetchActors(page = 1, pageSize = 10) {
     try {
         const response = await fetch(`/actors?page=${page}&page_size=${pageSize}`);
-        const actors = await response.json();
+        const result = await response.json();
+        const actors = result.actors;
+        const totalPages = result.total_pages;
 
         const actorsList = document.getElementById('actorsList');
         actorsList.innerHTML = '';
@@ -9,7 +11,7 @@ async function fetchActors(page = 1, pageSize = 10) {
         actors.forEach(actor => {
             const li = document.createElement('li');
             li.innerHTML = `${actor.first_name} | ${actor.last_name} | ${actor.last_update}`;
-            
+
             const updateBtn = document.createElement('button');
             updateBtn.innerHTML = 'Update';
             updateBtn.onclick = () => updateActor(actor.actor_id, actor.first_name, actor.last_name, actor.last_update);
@@ -23,26 +25,30 @@ async function fetchActors(page = 1, pageSize = 10) {
             actorsList.appendChild(li);
         });
 
-        generatePaginationButtons(page, pageSize);
+        generatePaginationButtons(page, totalPages, pageSize);
     } catch (error) {
         console.error('Error fetching actors:', error);
     }
 }
 
-function generatePaginationButtons(page, pageSize) {
-    const paginationContainer = document.getElementById('paginationContainer');
+function generatePaginationButtons(currentPage, totalPages, pageSize) {
+    const paginationContainer = document.getElementById('pagination');
     paginationContainer.innerHTML = '';
-
-    // Assuming you know the total number of pages available
-    const totalPages = 5;
 
     for (let i = 1; i <= totalPages; i++) {
         const button = document.createElement('button');
-        button.innerText = i;
+        button.innerHTML = i;
         button.onclick = () => fetchActors(i, pageSize);
+
+        if (i === currentPage) {
+            button.classList.add('active');
+        }
+
         paginationContainer.appendChild(button);
     }
 }
+
+
 
 fetchActors();
 
@@ -128,4 +134,4 @@ async function deleteActor(actorId) {
 }
 
 // Fetch actors when the page loads
-window.onload = fetchActors;
+window.onload = fetchActors(1, 10);

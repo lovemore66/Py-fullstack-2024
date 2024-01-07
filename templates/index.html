@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CRUD Frontend</title>
+    <title>Python, MYSQL and Javascript Full-stack App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Actor CRUD Operations</h1>
-
     <div class="details">
         <input type="text" id="firstName" placeholder="First Name">
         <input type="text" id="lastName" placeholder="Last Name">
@@ -16,10 +14,12 @@
     </div>
 
     <div>
-        <h2>Actors</h2>
+        <h2>ACTORS</h2>
         <ul id="actorsList"></ul>
     </div>
-    <div id="paginationContainer"></div>
+    <div class="pagination">
+        <div id="pagination"></div>
+    </div>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

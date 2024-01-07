@@ -57,13 +57,25 @@ def read_record(id):
 # Retrieve all actors
 @app.route('/actors', methods=['GET'])
 def get_all_actors():
-    page = request.args.get('page', default=1, type=int)
-    page_size = request.args.get('page_size', default=10, type=int)
+    default_page_size = 10  # Change this to your default page size
 
+    # Get total count of records
+    query_count = "SELECT COUNT(*) FROM actor"
+    cursor.execute(query_count)
+    total_records = cursor.fetchone()[0]
+
+    # Calculate total pages
+    total_pages = (total_records + default_page_size - 1) // default_page_size
+
+    # Get page and page size from query parameters
+    page = int(request.args.get('page', 1))
+    page_size = int(request.args.get('page_size', default_page_size))
+
+    # Calculate the offset for pagination
     offset = (page - 1) * page_size
 
-    query = "SELECT * FROM actor LIMIT %s, %s"
-    cursor.execute(query, (offset, page_size))
+    query = f"SELECT * FROM actor LIMIT {offset}, {page_size}"
+    cursor.execute(query)
     records = cursor.fetchall()
 
     actor_list = []
@@ -76,7 +88,13 @@ def get_all_actors():
         }
         actor_list.append(actor_dict)
 
-    return jsonify(actor_list)
+    response = {
+        'actors': actor_list,
+        'total_pages': total_pages
+    }
+
+    return jsonify(response)
+
 
 
 
